@@ -130,7 +130,7 @@
       }
       table.data td { padding: 13px 20px; border-bottom: 1px solid var(--border); }
       table.data tr:last-child td { border-bottom: 0; }
-      table.data td.model-name { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13.5px; }
+      table.data td.model-name { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13.5px; overflow-wrap: anywhere; }
 
       /* ---------- Code tabs ---------- */
       .code-card { overflow: hidden; }
@@ -665,7 +665,6 @@
             <div class="hero-stats" aria-label="Platform at a glance">
               <div class="hs"><b data-count="85">0</b><span>Models enabled</span></div>
               <div class="hs"><b data-count="7">0</b><span>Model groups</span></div>
-              <div class="hs"><b data-count="3">0</b><span>Code examples</span></div>
               <div class="hs"><b>1</b><span>API key</span></div>
             </div>
           </div>
@@ -684,11 +683,12 @@
           <section class="block" aria-labelledby="avail-title">
             <h2 class="sec" id="avail-title">Available models</h2>
             <div id="homeGroups"></div>
-            <p class="models-note">The full, up-to-date list is available via <code>GET /v1/models</code> with your API key.</p>
+            <p class="models-note">All 85 models are shown in full above and in the complete list below.</p>
           </section>
 
           <section class="block" aria-labelledby="pop-title">
-            <h2 class="sec" id="pop-title">Popular models</h2>
+            <h2 class="sec" id="pop-title">All models</h2>
+            <p class="models-note" style="margin:0 0 14px">Complete list of all 85 models enabled on this site — name, provider and type.</p>
             <div class="card table-card">
               <table class="data">
                 <thead><tr><th>Model</th><th>Provider</th><th>Type</th></tr></thead>
@@ -696,63 +696,6 @@
               </table>
             </div>
           </section>
-
-          <section class="block" aria-labelledby="qs-title">
-            <h2 class="sec" id="qs-title">Quick start</h2>
-            <div class="card code-card">
-              <div class="tabs" role="tablist" aria-label="Code examples">
-                <button type="button" class="active" data-code-tab="curl" role="tab">cURL</button>
-                <button type="button" data-code-tab="python" role="tab">OpenAI Python</button>
-                <button type="button" data-code-tab="node" role="tab">Node.js</button>
-              </div>
-              <div class="code-pane active" data-code-pane="curl">
-                <div class="code-head"><button class="copy-btn" type="button" data-copy="curl">Copy</button></div>
-                <pre class="code" id="code-curl">curl https://api.nanhaidataport.example/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $NANHAI_API_KEY" \
-  -d '{
-    "model": "gpt-5",
-    "messages": [
-      { "role": "user", "content": "Hello!" }
-    ]
-  }'</pre>
-              </div>
-              <div class="code-pane" data-code-pane="python">
-                <div class="code-head"><button class="copy-btn" type="button" data-copy="python">Copy</button></div>
-                <pre class="code" id="code-python">import os
-from openai import OpenAI
-
-client = OpenAI(
-    api_key=os.environ["NANHAI_API_KEY"],
-    base_url="https://api.nanhaidataport.example/v1",
-)
-
-response = client.chat.completions.create(
-    model="gpt-5",
-    messages=[{"role": "user", "content": "Hello!"}],
-)
-
-print(response.choices[0].message.content)</pre>
-              </div>
-              <div class="code-pane" data-code-pane="node">
-                <div class="code-head"><button class="copy-btn" type="button" data-copy="node">Copy</button></div>
-                <pre class="code" id="code-node">import OpenAI from "openai";
-
-const client = new OpenAI({
-  apiKey: process.env.NANHAI_API_KEY,
-  baseURL: "https://api.nanhaidataport.example/v1",
-});
-
-const response = await client.chat.completions.create({
-  model: "gpt-5",
-  messages: [{ role: "user", content: "Hello!" }],
-});
-
-console.log(response.choices[0].message.content);</pre>
-              </div>
-            </div>
-          </section>
-
 
           <section class="block" aria-labelledby="support-title">
             <h2 class="sec" id="support-title">Support</h2>
@@ -1326,20 +1269,15 @@ console.log(response.choices[0].message.content);</pre>
         card.appendChild(pills);
         homeGroups.appendChild(card);
       });
-      var POPULAR = [
-        ["GPT-5", "OpenAI", "Chat"], ["Claude Opus 4.5", "Anthropic", "Chat"], ["Gemini 2.5 Pro", "Google", "Chat"],
-        ["GPT-5.2", "OpenAI", "Chat"], ["Claude Sonnet 4.5", "Anthropic", "Chat"], ["DeepSeek V4", "DeepSeek", "Chat"],
-        ["Gemini 2.5 Flash", "Google", "Chat"], ["GPT-5 mini", "OpenAI", "Chat"], ["GPT-5.1", "OpenAI", "Chat"],
-        ["Claude Haiku 4.5", "Anthropic", "Chat"], ["Kimi K2.6", "Moonshot", "Chat"], ["GPT-4.1", "OpenAI", "Chat"]
-      ];
-      var popBody = document.getElementById("popularBody");
-      POPULAR.forEach(function (r) {
+      var TYPE_LABELS = { chat: "Chat", image: "Image", video: "Video", embedding: "Embedding" };
+      var allBody = document.getElementById("popularBody");
+      MODELS.forEach(function (m) {
         var tr = document.createElement("tr");
         tr.innerHTML = "<td class='model-name'></td><td></td><td></td>";
-        tr.children[0].textContent = r[0];
-        tr.children[1].textContent = r[1];
-        tr.children[2].textContent = r[2];
-        popBody.appendChild(tr);
+        tr.children[0].textContent = m.name;
+        tr.children[1].textContent = m.vendor;
+        tr.children[2].textContent = TYPE_LABELS[m.tag] || m.etype;
+        allBody.appendChild(tr);
       });
 
       /* ================= Router ================= */
@@ -1437,25 +1375,6 @@ console.log(response.choices[0].message.content);</pre>
         b.addEventListener("click", function () {
           document.querySelectorAll("[data-notif-tab]").forEach(function (x) { x.classList.remove("active"); });
           b.classList.add("active");
-        });
-      });
-
-      /* ================= Code tabs + copy ================= */
-      document.querySelectorAll("[data-code-tab]").forEach(function (b) {
-        b.addEventListener("click", function () {
-          document.querySelectorAll("[data-code-tab]").forEach(function (x) { x.classList.remove("active"); });
-          document.querySelectorAll("[data-code-pane]").forEach(function (x) { x.classList.remove("active"); });
-          b.classList.add("active");
-          document.querySelector("[data-code-pane='" + b.getAttribute("data-code-tab") + "']").classList.add("active");
-        });
-      });
-      document.querySelectorAll("[data-copy]").forEach(function (b) {
-        b.addEventListener("click", function () {
-          var text = document.getElementById("code-" + b.getAttribute("data-copy")).textContent;
-          function done() { b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy"; }, 1600); }
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).then(done, done);
-          } else { done(); }
         });
       });
 
