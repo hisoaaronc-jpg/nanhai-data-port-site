@@ -4,7 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nanhai Data Port Token Exchange — One Gateway, Every Model</title>
+<script>(function(){try{var l=new URLSearchParams(location.search).get("lang")||localStorage.getItem("ndp-lang");if(l){document.documentElement.lang=l;}}catch(e){}})();</script>
 <meta name="description" content="Nanhai Data Port Token Exchange: a neutral model exchange. One integration, unified API and billing, verified suppliers, every major model.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+Thai:wght@400;600;700;800&family=Sarabun:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#070604; --bg2:#0d0a06; --panel:#12100b; --panel2:#171309;
@@ -151,6 +155,22 @@
     .rank-meta{display:none}
     section{padding:48px 0 4px}
   }
+
+  /* i18n: language switcher + per-language font stacks */
+  .lang-switch{display:flex;gap:2px;border:1px solid var(--line2);border-radius:9px;padding:2px;flex-shrink:0}
+  .lang-switch button{background:none;border:none;color:var(--muted);font-size:12.5px;font-weight:600;padding:5px 9px;border-radius:7px;cursor:pointer;font-family:inherit;line-height:1.3}
+  .lang-switch button:hover{color:var(--text)}
+  .lang-switch button.active{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#191204}
+  .mobile-menu .lang-switch{margin-top:12px;width:max-content}
+  html[lang="zh-Hans"] body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC","Helvetica Neue",Arial,sans-serif}
+  html[lang="zh-Hant"] body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang TC","PingFang HK","Microsoft JhengHei","Noto Sans TC","Helvetica Neue",Arial,sans-serif}
+  html[lang="th"] body{font-family:"Sarabun","Noto Sans Thai",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;line-height:1.75}
+  html[lang="th"] .hero h1{line-height:1.7}
+  html[lang="th"] .brand-name{line-height:1.5}
+  html[lang="th"] th{letter-spacing:.03em}
+  html[lang="zh-Hans"] .sec-head .tag,html[lang="zh-Hant"] .sec-head .tag,html[lang="th"] .sec-head .tag{letter-spacing:.1em}
+  html[lang="zh-Hans"] .brand-name span,html[lang="zh-Hant"] .brand-name span,html[lang="th"] .brand-name span{letter-spacing:.14em}
+  html[lang="zh-Hans"] th,html[lang="zh-Hant"] th{letter-spacing:.06em}
 </style>
 </head>
 <body>
@@ -175,6 +195,7 @@
     <div class="nav-right">
       <a class="btn" href="https://api.aaronalphax.com">Sign in</a>
       <a class="btn btn-gold" href="https://api.aaronalphax.com">Open Console</a>
+      <div class="lang-switch" id="langSwitch" aria-label="Language"></div>
       <button class="burger" id="burger" aria-label="Menu">☰</button>
     </div>
   </div>
@@ -187,6 +208,7 @@
     <a href="#gateway">Gateway</a>
     <a href="#about">About</a>
     <a href="https://api.aaronalphax.com">Console</a>
+    <div class="lang-switch" id="langSwitchM" aria-label="Language"></div>
   </div>
 </header>
 
@@ -269,7 +291,7 @@
     <p class="sec-sub">We read what developers actually complain about — the walls, the caps, the bans, the surprise bills — and built the exchange the other way.</p>
     <div class="grid">
       <div class="card"><h3>No Payment Wall</h3><p>China's strongest models with none of the four walls: an English console, no +86 phone number, no passport real-name queue, no Alipay-only top-up. If you can pay, you can build.</p></div>
-      <div class="card"><h3>Costs You Control</h3><p>Prepaid balance, volume-based discounts and spending caps you set yourself. No runaway auto-charges, no credit card billed by surprise, no aggregator surcharge stacked on your margin.</p></div>
+      <div class="card"><h3>Costs You Control</h3><p>Prepaid balance, usage-based billing and spending caps you set yourself. No runaway auto-charges, no credit card billed by surprise, no aggregator surcharge stacked on your margin.</p></div>
       <div class="card"><h3>Ban-Proof Supply</h3><p>Supply is never tied to a single upstream account. When one source is banned, throttled or cut off, routing shifts — the ban does not cascade to you.</p></div>
       <div class="card"><h3>No Caps, No Seat Traps</h3><p>No monthly spending ceiling that stops your product mid-month, and no 150-seat enterprise plan as the only way up. Pay as you go, sized for real teams.</p></div>
       <div class="card"><h3>Stable at Peak Hours</h3><p>Multi-channel redundancy behind every popular model. Peak-hour 503s and single-provider errors upstream do not take your product down.</p></div>
@@ -352,6 +374,481 @@
 </footer>
 
 <script>
+  /* ============ i18n ============ */
+  var LANGS = [
+    { code: "en", label: "EN" },
+    { code: "zh-Hans", label: "简" },
+    { code: "zh-Hant", label: "繁" },
+    { code: "th", label: "ไทย" }
+  ];
+  var I18N = {
+    "en": {
+      "@title": "Nanhai Data Port Token Exchange — One Gateway, Every Model",
+      "@desc": "Nanhai Data Port Token Exchange: a neutral model exchange. One integration, unified API and billing, verified suppliers, every major model.",
+      "@searchPh": "Search models or providers…",
+      "@live": "Live",
+      "@trade": "Trade API →",
+      "@count": "Showing {shown} of {total} listed models · All models are called by name through one unified API.",
+      "@tabAll": "All",
+      "@listed": "LISTED",
+      "@modelsListed": "models listed",
+      "@type.chat": "Chat", "@type.image": "Image", "@type.video": "Video", "@type.embedding": "Embedding"
+    },
+    "zh-Hans": {
+      "@title": "南海数港 Nanhai Data Port 令牌交易所 — 一个网关，接入所有模型",
+      "@desc": "南海数港（Nanhai Data Port）令牌交易所：中立的模型交易所。一次接入、统一 API 与统一账单、经核验的供应商，覆盖所有主流模型。",
+      "@searchPh": "搜索模型或供应商…",
+      "@live": "在线",
+      "@trade": "交易 API →",
+      "@count": "显示 {shown} / {total} 个上架模型 · 全部模型通过统一 API 按名称调用。",
+      "@tabAll": "全部",
+      "@listed": "已上架",
+      "@modelsListed": "个上架模型",
+      "@type.chat": "对话", "@type.image": "图像", "@type.video": "视频", "@type.embedding": "嵌入",
+      "TOKEN EXCHANGE": "令牌交易所",
+      "Exchange": "交易所", "Models": "模型", "Suppliers": "供应商", "Settlement": "结算",
+      "Developers": "开发者", "Gateway": "网关", "About": "关于",
+      "Sign in": "登录", "Open Console": "打开控制台", "Console": "控制台",
+      "Token Exchange": "令牌交易所",
+      "A neutral exchange for AI model supply. One integration, one API key and one unified bill — route to every major model from verified suppliers, with transparent usage and supplier credit scoring built in.":
+        "一个中立的 AI 模型供给交易所。一次接入、一把 API 密钥、一张统一账单——即可调用经核验供应商的全部主流模型，用量透明，供应商信用评分内置其中。",
+      "Start Trading API": "开始使用交易 API",
+      "Browse the Board": "浏览模型看板",
+      "Models listed": "已上架模型", "Model suppliers": "模型供应商",
+      "Compatible API routes": "兼容 API 路由", "Exchange operation": "交易所运营",
+      "THE BOARD": "模型看板", "Exchange Board": "交易所看板",
+      "Every listed model, one board. Pick a model, call it through the same gateway — the exchange routes, meters and settles it under a single account.":
+        "全部上架模型，一块看板。选定模型，通过同一网关调用——交易所在同一账户下完成路由、计量与结算。",
+      "Model": "模型", "Provider": "供应商", "Type": "类型", "Status": "状态",
+      "SUPPLY SIDE": "供给侧", "Supplier Rankings": "供应商排行",
+      "Suppliers are ranked by listed model coverage on the exchange. Every supplier passes identity and capability verification, and carries a public credit profile — no anonymous relay supply.":
+        "供应商按其在交易所上架模型的覆盖度排名。每家供应商都通过身份与能力核验，并拥有公开的信用档案——没有匿名中转供给。",
+      "Infrastructure Supply Partners": "基础设施供应伙伴",
+      "WHY NANHAI": "为什么选南海", "Built Like an Exchange": "按交易所的标准建造",
+      "Not another relay. The exchange layer — matching, verification, metering and settlement — is the product.":
+        "不是又一个中转站。撮合、核验、计量与结算这一交易所层，才是产品本身。",
+      "Neutral Matching": "中立撮合",
+      "The exchange does not push its own supply. Requests are matched to listed suppliers on capability and availability, under one neutral rulebook.":
+        "交易所不推销自有供给。请求按能力与可用性匹配到上架供应商，遵循同一套中立规则。",
+      "Verified Suppliers": "核验供应商",
+      "Suppliers are identity-checked and capability-tested before listing, with ongoing credit scoring based on delivery quality and stability.":
+        "供应商上架前须通过身份核验与能力测试，并依据交付质量与稳定性持续进行信用评分。",
+      "One Unified API": "一套统一 API",
+      "A single OpenAI-compatible endpoint covers chat, image, video and embeddings across every listed model. Integrate once, trade everything.":
+        "一个兼容 OpenAI 的端点，覆盖全部上架模型的对话、图像、视频与嵌入。接入一次，交易全部。",
+      "Unified Billing": "统一账单",
+      "All usage across all suppliers settles into one account and one transparent usage statement. No per-vendor top-ups, no fragmented bills.":
+        "所有供应商的用量汇总到一个账户、一张透明的用量对账单。无需逐家充值，不再有零散账单。",
+      "Transparent Usage": "用量透明",
+      "Every call is metered and logged in real time in the console — tokens, latency and routing — so what you used is always auditable.":
+        "每一次调用都在控制台实时计量与记录——令牌数、延迟与路由——用量始终可审计。",
+      "Singapore Gateway": "新加坡网关",
+      "Operated from Singapore for global reach, connecting overseas demand with the strongest model supply across Asia and beyond.":
+        "以新加坡为运营枢纽连接全球，将海外需求与亚洲乃至全球最强的模型供给对接。",
+      "THE FIX LIST": "痛点清单", "Built Around the Pain": "围绕真实痛点而建",
+      "We read what developers actually complain about — the walls, the caps, the bans, the surprise bills — and built the exchange the other way.":
+        "我们认真读了开发者真正在抱怨的东西——那些墙、那些上限、那些封禁、那些意外账单——然后把交易所反着建。",
+      "No Payment Wall": "没有付款墙",
+      "China's strongest models with none of the four walls: an English console, no +86 phone number, no passport real-name queue, no Alipay-only top-up. If you can pay, you can build.":
+        "用上中国最强的模型，不必翻四道墙：英文控制台、无需 +86 手机号、无需护照实名排队、不止支付宝一种充值方式。能付款，就能开发。",
+      "Costs You Control": "成本由你掌控",
+      "Prepaid balance, usage-based billing and spending caps you set yourself. No runaway auto-charges, no credit card billed by surprise, no aggregator surcharge stacked on your margin.":
+        "预付余额、按用量计费、支出上限由你自己设定。没有失控的自动扣费，没有信用卡被意外扣款，也没有聚合商在你的利润上层层加码。",
+      "Ban-Proof Supply": "供给不怕封禁",
+      "Supply is never tied to a single upstream account. When one source is banned, throttled or cut off, routing shifts — the ban does not cascade to you.":
+        "供给从不绑定在单一上游账户上。某个来源被封禁、限流或切断时，路由自动切换——封禁不会传导到你身上。",
+      "No Caps, No Seat Traps": "没有上限，没有席位陷阱",
+      "No monthly spending ceiling that stops your product mid-month, and no 150-seat enterprise plan as the only way up. Pay as you go, sized for real teams.":
+        "没有会让产品月中停摆的月度支出天花板，也没有只能买 150 席企业版才能升级这一说。按量付费，按真实团队的规模来。",
+      "Stable at Peak Hours": "高峰时段稳定",
+      "Multi-channel redundancy behind every popular model. Peak-hour 503s and single-provider errors upstream do not take your product down.":
+        "每个热门模型背后都有多渠道冗余。高峰时段的 503 和单一供应商的上游错误，不会让你的产品停机。",
+      "A Real Counterparty": "真实的交易对手",
+      "A registered company you can contract with, reconcile against and audit — a full statement for every token. Not a grey reseller who vanishes with your balance.":
+        "一家可以签约、可以对账、可以审计的注册公司——每一个令牌都有完整对账单。不是那种卷走余额就消失的灰色转售商。",
+      "SETTLEMENT": "结算", "Settle Your Way": "按你的方式结算",
+      "One more wall removed: paying. Top up and settle through the channel that actually works in your country — every settlement is confirmed by a human, so a declined card never locks you out.":
+        "再拆掉一道墙：付款。通过在你所在国家真正可用的渠道充值与结算——每一笔结算都经人工确认，银行卡被拒也不会把你锁在门外。",
+      "Alipay": "支付宝", "WeChat Pay": "微信支付", "Bank Wire · SWIFT": "银行电汇 · SWIFT",
+      "HOW IT WORKS": "运作方式", "Three Steps to the Board": "三步上看板",
+      "Get one API key": "拿到一把 API 密钥",
+      "Create an account in the console and issue a single key for the whole exchange.":
+        "在控制台创建账户，签发一把覆盖整个交易所的密钥。",
+      "Route to any model": "路由到任意模型",
+      "Call any listed model through the same endpoint — switch models by name, nothing else changes.":
+        "通过同一端点调用任意上架模型——按名称切换模型，其他一切不变。",
+      "Settle in one place": "在一处结算",
+      "Usage from every supplier lands on one statement, with full logs in the console.":
+        "所有供应商的用量汇入一张对账单，完整日志尽在控制台。",
+      "WORKS WITH": "兼容工具",
+      "FOR DEVELOPERS": "致开发者", "Built to Integrate, Built to Hold": "为接入而建，为稳定而建",
+      "The complaints we hear most are not about models — they are about everything around them. So the plumbing is part of the product.":
+        "我们听到最多的抱怨与模型无关——全是模型周围的那些事。所以管道本身就是产品的一部分。",
+      "One Integration, OpenAI-Compatible": "一次接入，兼容 OpenAI",
+      "Point your existing OpenAI client at the exchange endpoint and switch models by name. No new SDK to learn, no chain of aggregators stacking errors and margin between you and the model.":
+        "把现有的 OpenAI 客户端指向交易所端点，按名称切换模型即可。无需学新 SDK，也没有一串聚合商在你和模型之间叠加错误与加价。",
+      "Limits in the Open": "限额公开透明",
+      "The caps on your account are the ones you set on your own tokens — visible in the console, never tightened silently mid-month. Every call lands on a per-token statement you can export and reconcile.":
+        "你账户上的限额，就是你为自己的令牌设定的那些——在控制台可见，绝不会在月中被悄悄收紧。每一次调用都落入可导出、可对账的逐令牌对账单。",
+      "Failover by Default": "默认故障切换",
+      "Failed requests retry automatically across redundant channels, and a failing channel is pulled out of rotation instead of cascading errors into your product. One supplier's bad day is not your outage.":
+        "失败的请求会自动跨冗余渠道重试，出故障的渠道会被移出轮换，而不是把错误级联进你的产品。某个供应商的坏日子，不会成为你的故障日。",
+      "THE SOUTHEAST ASIA CHANNEL": "东南亚通道",
+      "China's Models, Delivered Into Southeast Asia": "把中国模型送进东南亚",
+      "One channel carrying China's strongest models into the region's fastest-growing markets, anchored by the institutions that run Southeast Asia's trade. Tokens only — supplied, routed and settled.":
+        "一条通道，把中国最强的模型送进本地区增长最快的市场，由支撑东南亚贸易的机构网络锚定。只做令牌——供给、路由、结算。",
+      "Model Supply, One Channel": "模型供给，一条通道",
+      "The full board — 134 models across 12 providers — behind one key and one statement, routed into Southeast Asia without the payment walls, phone walls and real-name queues that block the region's builders today.":
+        "完整看板——12 家供应商的 134 个模型——收在一把密钥、一张对账单之后，路由进入东南亚，不必面对今天挡住本地区开发者的付款墙、手机号墙与实名排队。",
+      "Capacity You Can Reserve": "可预留的容量",
+      "Committed throughput for production workloads: reserved rate limits, per-key ceilings you set yourself, and automatic failover across suppliers when one channel degrades. Your volume is planned capacity, not a shared queue.":
+        "为生产级工作负载预留吞吐：可预留的速率上限、由你自设的单密钥限额，以及某条渠道劣化时跨供应商的自动故障切换。你的用量是规划好的容量，不是共享队列。",
+      "Built for Banks & Financial Institutions": "为银行与金融机构而建",
+      "Model supply for regulated institutions, with service in English, Simplified and Traditional Chinese, and Thai. Regulated work needs regulated plumbing — per-token statements, key rotation, retention controls and audit-grade logs are already built into the exchange.":
+        "为受监管机构提供模型供给，服务语言覆盖英语、简体中文、繁体中文与泰语。受监管的业务需要受监管的管道——逐令牌对账单、密钥轮换、留存控制与审计级日志，都已内置于交易所。",
+      "Regional Settlement": "区域结算",
+      "Settle in the channels the region actually uses — USDT, SWIFT wire, PayPal, Alipay and WeChat Pay — confirmed by a human, reconciled on one statement across every supplier.":
+        "用本地区真正使用的渠道结算——USDT、SWIFT 电汇、PayPal、支付宝与微信支付——经人工确认，在一张对账单上跨全部供应商对清。",
+      "Rooted in the Region": "扎根本地区",
+      "Built around Southeast Asia's markets, languages and business hours — not a fly-in vendor. The channel's home ground is the region itself, with Thailand as its anchor market.":
+        "围绕东南亚的市场、语言与营业时间而建——不是飞来飞去的过客供应商。这条通道的主场就是本地区，泰国是它的锚点市场。",
+      "A Counterparty Institutions Can Audit": "机构可审计的交易对手",
+      "A registered company you can contract with, reconcile against and audit — full statements for every token, named contacts, no grey resellers. The standard of counterparty a bank's compliance team can sign off.":
+        "一家可以签约、可以对账、可以审计的注册公司——每个令牌都有完整对账单、实名联系人、没有灰色转售商。这是银行合规团队能签字通过的对手方标准。",
+      "ABOUT": "关于", "About the Exchange": "关于本交易所",
+      "Nanhai Data Port Token Exchange is a neutral marketplace for AI model capacity. We connect verified supply with global demand through one gateway — one integration, unified API, unified billing — so builders can focus on their product instead of juggling vendors, keys and bills.":
+        "南海数港（Nanhai Data Port）令牌交易所是一个中立的 AI 模型容量市场。我们通过一个网关连接经核验的供给与全球需求——一次接入、统一 API、统一账单——让开发者专注于产品，而不必在供应商、密钥和账单之间疲于奔命。",
+      "Open the Console": "打开控制台",
+      "© 2026 Nanhai Data Port Token Exchange — one gateway, every model.":
+        "© 2026 南海数港 Nanhai Data Port 令牌交易所 — 一个网关，接入所有模型。"
+    },
+    "zh-Hant": {
+      "@title": "南海數港 Nanhai Data Port 令牌交易所 — 一個網關，接入所有模型",
+      "@desc": "南海數港（Nanhai Data Port）令牌交易所：中立的模型交易所。一次接入、統一 API 與統一帳單、經核驗的供應商，覆蓋所有主流模型。",
+      "@searchPh": "搜尋模型或供應商…",
+      "@live": "線上",
+      "@trade": "交易 API →",
+      "@count": "顯示 {shown} / {total} 個上架模型 · 全部模型透過統一 API 按名稱調用。",
+      "@tabAll": "全部",
+      "@listed": "已上架",
+      "@modelsListed": "個上架模型",
+      "@type.chat": "對話", "@type.image": "圖像", "@type.video": "影片", "@type.embedding": "嵌入",
+      "TOKEN EXCHANGE": "令牌交易所",
+      "Exchange": "交易所", "Models": "模型", "Suppliers": "供應商", "Settlement": "結算",
+      "Developers": "開發者", "Gateway": "網關", "About": "關於",
+      "Sign in": "登入", "Open Console": "開啟控制台", "Console": "控制台",
+      "Token Exchange": "令牌交易所",
+      "A neutral exchange for AI model supply. One integration, one API key and one unified bill — route to every major model from verified suppliers, with transparent usage and supplier credit scoring built in.":
+        "一個中立的 AI 模型供給交易所。一次接入、一把 API 金鑰、一張統一帳單——即可調用經核驗供應商的全部主流模型，用量透明，供應商信用評分內建其中。",
+      "Start Trading API": "開始使用交易 API",
+      "Browse the Board": "瀏覽模型看板",
+      "Models listed": "已上架模型", "Model suppliers": "模型供應商",
+      "Compatible API routes": "相容 API 路由", "Exchange operation": "交易所營運",
+      "THE BOARD": "模型看板", "Exchange Board": "交易所看板",
+      "Every listed model, one board. Pick a model, call it through the same gateway — the exchange routes, meters and settles it under a single account.":
+        "全部上架模型，一塊看板。選定模型，透過同一網關調用——交易所在同一帳戶下完成路由、計量與結算。",
+      "Model": "模型", "Provider": "供應商", "Type": "類型", "Status": "狀態",
+      "SUPPLY SIDE": "供給側", "Supplier Rankings": "供應商排行",
+      "Suppliers are ranked by listed model coverage on the exchange. Every supplier passes identity and capability verification, and carries a public credit profile — no anonymous relay supply.":
+        "供應商按其在交易所上架模型的覆蓋度排名。每家供應商都通過身分與能力核驗，並擁有公開的信用檔案——沒有匿名中轉供給。",
+      "Infrastructure Supply Partners": "基礎設施供應夥伴",
+      "WHY NANHAI": "為什麼選南海", "Built Like an Exchange": "按交易所的標準建造",
+      "Not another relay. The exchange layer — matching, verification, metering and settlement — is the product.":
+        "不是又一間中轉站。撮合、核驗、計量與結算這一交易所層，才是產品本身。",
+      "Neutral Matching": "中立撮合",
+      "The exchange does not push its own supply. Requests are matched to listed suppliers on capability and availability, under one neutral rulebook.":
+        "交易所不推銷自有供給。請求按能力與可用性匹配到上架供應商，遵循同一套中立規則。",
+      "Verified Suppliers": "核驗供應商",
+      "Suppliers are identity-checked and capability-tested before listing, with ongoing credit scoring based on delivery quality and stability.":
+        "供應商上架前須通過身分核驗與能力測試，並依據交付品質與穩定性持續進行信用評分。",
+      "One Unified API": "一套統一 API",
+      "A single OpenAI-compatible endpoint covers chat, image, video and embeddings across every listed model. Integrate once, trade everything.":
+        "一個相容 OpenAI 的端點，覆蓋全部上架模型的對話、圖像、影片與嵌入。接入一次，交易全部。",
+      "Unified Billing": "統一帳單",
+      "All usage across all suppliers settles into one account and one transparent usage statement. No per-vendor top-ups, no fragmented bills.":
+        "所有供應商的用量彙總到一個帳戶、一張透明的用量對帳單。無需逐家儲值，不再有零散帳單。",
+      "Transparent Usage": "用量透明",
+      "Every call is metered and logged in real time in the console — tokens, latency and routing — so what you used is always auditable.":
+        "每一次調用都在控制台即時計量與記錄——令牌數、延遲與路由——用量始終可稽核。",
+      "Singapore Gateway": "新加坡網關",
+      "Operated from Singapore for global reach, connecting overseas demand with the strongest model supply across Asia and beyond.":
+        "以新加坡為營運樞紐連接全球，將海外需求與亞洲乃至全球最強的模型供給對接。",
+      "THE FIX LIST": "痛點清單", "Built Around the Pain": "圍繞真實痛點而建",
+      "We read what developers actually complain about — the walls, the caps, the bans, the surprise bills — and built the exchange the other way.":
+        "我們認真讀了開發者真正在抱怨的東西——那些牆、那些上限、那些封禁、那些意外帳單——然後把交易所反著建。",
+      "No Payment Wall": "沒有付款牆",
+      "China's strongest models with none of the four walls: an English console, no +86 phone number, no passport real-name queue, no Alipay-only top-up. If you can pay, you can build.":
+        "用上中國最強的模型，不必翻四道牆：英文控制台、無需 +86 手機號碼、無需護照實名排隊、不只支付寶一種儲值方式。能付款，就能開發。",
+      "Costs You Control": "成本由你掌控",
+      "Prepaid balance, usage-based billing and spending caps you set yourself. No runaway auto-charges, no credit card billed by surprise, no aggregator surcharge stacked on your margin.":
+        "預付餘額、按用量計費、支出上限由你自己設定。沒有失控的自動扣款，沒有信用卡被意外扣款，也沒有聚合商在你的利潤上層層加碼。",
+      "Ban-Proof Supply": "供給不怕封禁",
+      "Supply is never tied to a single upstream account. When one source is banned, throttled or cut off, routing shifts — the ban does not cascade to you.":
+        "供給從不綁定在單一上游帳戶上。某個來源被封禁、限流或切斷時，路由自動切換——封禁不會傳導到你身上。",
+      "No Caps, No Seat Traps": "沒有上限，沒有席位陷阱",
+      "No monthly spending ceiling that stops your product mid-month, and no 150-seat enterprise plan as the only way up. Pay as you go, sized for real teams.":
+        "沒有會讓產品月中停擺的每月支出天花板，也沒有只能買 150 席企業版才能升級這一說。按量付費，按真實團隊的規模來。",
+      "Stable at Peak Hours": "高峰時段穩定",
+      "Multi-channel redundancy behind every popular model. Peak-hour 503s and single-provider errors upstream do not take your product down.":
+        "每個熱門模型背後都有多渠道冗餘。高峰時段的 503 和單一供應商的上游錯誤，不會讓你的產品停機。",
+      "A Real Counterparty": "真實的交易對手",
+      "A registered company you can contract with, reconcile against and audit — a full statement for every token. Not a grey reseller who vanishes with your balance.":
+        "一家可以簽約、可以對帳、可以稽核的註冊公司——每一個令牌都有完整對帳單。不是那種捲走餘額就消失的灰色轉售商。",
+      "SETTLEMENT": "結算", "Settle Your Way": "按你的方式結算",
+      "One more wall removed: paying. Top up and settle through the channel that actually works in your country — every settlement is confirmed by a human, so a declined card never locks you out.":
+        "再拆掉一道牆：付款。透過在你所在國家真正可用的渠道儲值與結算——每一筆結算都經人工確認，銀行卡被拒也不會把你鎖在門外。",
+      "Alipay": "支付寶", "WeChat Pay": "微信支付", "Bank Wire · SWIFT": "銀行電匯 · SWIFT",
+      "HOW IT WORKS": "運作方式", "Three Steps to the Board": "三步上看板",
+      "Get one API key": "拿到一把 API 金鑰",
+      "Create an account in the console and issue a single key for the whole exchange.":
+        "在控制台建立帳戶，簽發一把覆蓋整個交易所的金鑰。",
+      "Route to any model": "路由到任意模型",
+      "Call any listed model through the same endpoint — switch models by name, nothing else changes.":
+        "透過同一端點調用任意上架模型——按名稱切換模型，其他一切不變。",
+      "Settle in one place": "在一處結算",
+      "Usage from every supplier lands on one statement, with full logs in the console.":
+        "所有供應商的用量匯入一張對帳單，完整記錄盡在控制台。",
+      "WORKS WITH": "相容工具",
+      "FOR DEVELOPERS": "致開發者", "Built to Integrate, Built to Hold": "為接入而建，為穩定而建",
+      "The complaints we hear most are not about models — they are about everything around them. So the plumbing is part of the product.":
+        "我們聽到最多的抱怨與模型無關——全是模型周圍的那些事。所以管道本身就是產品的一部分。",
+      "One Integration, OpenAI-Compatible": "一次接入，相容 OpenAI",
+      "Point your existing OpenAI client at the exchange endpoint and switch models by name. No new SDK to learn, no chain of aggregators stacking errors and margin between you and the model.":
+        "把現有的 OpenAI 用戶端指向交易所端點，按名稱切換模型即可。無需學新 SDK，也沒有一串聚合商在你和模型之間疊加錯誤與加價。",
+      "Limits in the Open": "限額公開透明",
+      "The caps on your account are the ones you set on your own tokens — visible in the console, never tightened silently mid-month. Every call lands on a per-token statement you can export and reconcile.":
+        "你帳戶上的限額，就是你為自己的令牌設定的那些——在控制台可見，絕不會在月中被悄悄收緊。每一次調用都落入可匯出、可對帳的逐令牌對帳單。",
+      "Failover by Default": "預設故障切換",
+      "Failed requests retry automatically across redundant channels, and a failing channel is pulled out of rotation instead of cascading errors into your product. One supplier's bad day is not your outage.":
+        "失敗的請求會自動跨冗餘渠道重試，出故障的渠道會被移出輪換，而不是把錯誤級聯進你的產品。某個供應商的壞日子，不會成為你的故障日。",
+      "THE SOUTHEAST ASIA CHANNEL": "東南亞通道",
+      "China's Models, Delivered Into Southeast Asia": "把中國模型送進東南亞",
+      "One channel carrying China's strongest models into the region's fastest-growing markets, anchored by the institutions that run Southeast Asia's trade. Tokens only — supplied, routed and settled.":
+        "一條通道，把中國最強的模型送進本地區增長最快的市場，由支撐東南亞貿易的機構網絡錨定。只做令牌——供給、路由、結算。",
+      "Model Supply, One Channel": "模型供給，一條通道",
+      "The full board — 134 models across 12 providers — behind one key and one statement, routed into Southeast Asia without the payment walls, phone walls and real-name queues that block the region's builders today.":
+        "完整看板——12 家供應商的 134 個模型——收在一把金鑰、一張對帳單之後，路由進入東南亞，不必面對今天擋住本地區開發者的付款牆、手機牆與實名排隊。",
+      "Capacity You Can Reserve": "可預留的容量",
+      "Committed throughput for production workloads: reserved rate limits, per-key ceilings you set yourself, and automatic failover across suppliers when one channel degrades. Your volume is planned capacity, not a shared queue.":
+        "為生產級工作負載預留吞吐：可預留的速率上限、由你自設的單一金鑰限額，以及某條渠道劣化時跨供應商的自動故障切換。你的用量是規劃好的容量，不是共享佇列。",
+      "Built for Banks & Financial Institutions": "為銀行與金融機構而建",
+      "Model supply for regulated institutions, with service in English, Simplified and Traditional Chinese, and Thai. Regulated work needs regulated plumbing — per-token statements, key rotation, retention controls and audit-grade logs are already built into the exchange.":
+        "為受監管機構提供模型供給，服務語言覆蓋英語、簡體中文、繁體中文與泰語。受監管的業務需要受監管的管道——逐令牌對帳單、金鑰輪換、留存控制與稽核級記錄，都已內建於交易所。",
+      "Regional Settlement": "區域結算",
+      "Settle in the channels the region actually uses — USDT, SWIFT wire, PayPal, Alipay and WeChat Pay — confirmed by a human, reconciled on one statement across every supplier.":
+        "用本地區真正使用的渠道結算——USDT、SWIFT 電匯、PayPal、支付寶與微信支付——經人工確認，在一張對帳單上跨全部供應商對清。",
+      "Rooted in the Region": "紮根本地區",
+      "Built around Southeast Asia's markets, languages and business hours — not a fly-in vendor. The channel's home ground is the region itself, with Thailand as its anchor market.":
+        "圍繞東南亞的市場、語言與營業時間而建——不是飛來飛去的過客供應商。這條通道的主場就是本地區，泰國是它的錨點市場。",
+      "A Counterparty Institutions Can Audit": "機構可稽核的交易對手",
+      "A registered company you can contract with, reconcile against and audit — full statements for every token, named contacts, no grey resellers. The standard of counterparty a bank's compliance team can sign off.":
+        "一家可以簽約、可以對帳、可以稽核的註冊公司——每個令牌都有完整對帳單、實名聯絡人、沒有灰色轉售商。這是銀行合規團隊能簽字通過的交易對手標準。",
+      "ABOUT": "關於", "About the Exchange": "關於本交易所",
+      "Nanhai Data Port Token Exchange is a neutral marketplace for AI model capacity. We connect verified supply with global demand through one gateway — one integration, unified API, unified billing — so builders can focus on their product instead of juggling vendors, keys and bills.":
+        "南海數港（Nanhai Data Port）令牌交易所是一個中立的 AI 模型容量市場。我們透過一個網關連接經核驗的供給與全球需求——一次接入、統一 API、統一帳單——讓開發者專注於產品，而不必在供應商、金鑰和帳單之間疲於奔命。",
+      "Open the Console": "開啟控制台",
+      "© 2026 Nanhai Data Port Token Exchange — one gateway, every model.":
+        "© 2026 南海數港 Nanhai Data Port 令牌交易所 — 一個網關，接入所有模型。"
+    },
+    "th": {
+      "@title": "Nanhai Data Port Token Exchange — เกตเวย์เดียว เชื่อมต่อทุกโมเดล",
+      "@desc": "Nanhai Data Port Token Exchange: ตลาดแลกเปลี่ยนโมเดลที่เป็นกลาง เชื่อมต่อครั้งเดียว API และใบแจ้งยอดแบบรวมศูนย์ ผู้ให้บริการที่ผ่านการยืนยัน ครอบคลุมโมเดลหลักทั้งหมด",
+      "@searchPh": "ค้นหาโมเดลหรือผู้ให้บริการ…",
+      "@live": "พร้อมใช้งาน",
+      "@trade": "เรียกใช้ API →",
+      "@count": "แสดง {shown} จาก {total} โมเดลที่จดทะเบียน · โมเดลทั้งหมดเรียกใช้ตามชื่อผ่าน API แบบรวมศูนย์เพียงชุดเดียว",
+      "@tabAll": "ทั้งหมด",
+      "@listed": "จดทะเบียนแล้ว",
+      "@modelsListed": "โมเดลที่จดทะเบียน",
+      "@type.chat": "แชท", "@type.image": "รูปภาพ", "@type.video": "วิดีโอ", "@type.embedding": "เอ็มเบดดิง",
+      "TOKEN EXCHANGE": "ตลาดแลกเปลี่ยนโทเคน",
+      "Exchange": "ตลาดแลกเปลี่ยน", "Models": "โมเดล", "Suppliers": "ผู้ให้บริการ", "Settlement": "การชำระบัญชี",
+      "Developers": "นักพัฒนา", "Gateway": "เกตเวย์", "About": "เกี่ยวกับเรา",
+      "Sign in": "เข้าสู่ระบบ", "Open Console": "เปิดคอนโซล", "Console": "คอนโซล",
+      "Token Exchange": "ตลาดแลกเปลี่ยนโทเคน",
+      "A neutral exchange for AI model supply. One integration, one API key and one unified bill — route to every major model from verified suppliers, with transparent usage and supplier credit scoring built in.":
+        "ตลาดแลกเปลี่ยนกลางสำหรับการจัดหาโมเดล AI เชื่อมต่อเพียงครั้งเดียว ใช้คีย์ API เดียว และรับใบแจ้งยอดรวมเพียงฉบับเดียว เพื่อเรียกใช้โมเดลหลักทั้งหมดจากผู้ให้บริการที่ผ่านการยืนยัน พร้อมความโปร่งใสในการใช้งานและระบบคะแนนเครดิตผู้ให้บริการในตัว",
+      "Start Trading API": "เริ่มใช้งาน API",
+      "Browse the Board": "ดูตารางแลกเปลี่ยน",
+      "Models listed": "โมเดลที่จดทะเบียน", "Model suppliers": "ผู้ให้บริการโมเดล",
+      "Compatible API routes": "เส้นทาง API ที่รองรับ", "Exchange operation": "การดำเนินงานของตลาด",
+      "THE BOARD": "ตารางแลกเปลี่ยน", "Exchange Board": "ตารางแลกเปลี่ยนโมเดล",
+      "Every listed model, one board. Pick a model, call it through the same gateway — the exchange routes, meters and settles it under a single account.":
+        "โมเดลที่จดทะเบียนทั้งหมดรวมอยู่ในตารางเดียว เลือกโมเดลและเรียกใช้ผ่านเกตเวย์เดียวกัน ตลาดจะจัดเส้นทาง วัดปริมาณ และชำระบัญชีภายใต้บัญชีเดียว",
+      "Model": "โมเดล", "Provider": "ผู้ให้บริการ", "Type": "ประเภท", "Status": "สถานะ",
+      "SUPPLY SIDE": "ฝั่งอุปทาน", "Supplier Rankings": "อันดับผู้ให้บริการ",
+      "Suppliers are ranked by listed model coverage on the exchange. Every supplier passes identity and capability verification, and carries a public credit profile — no anonymous relay supply.":
+        "ผู้ให้บริการได้รับการจัดอันดับตามความครอบคลุมของโมเดลที่จดทะเบียนในตลาด ผู้ให้บริการทุกรายผ่านการยืนยันตัวตนและทดสอบความสามารถ และมีโปรไฟล์เครดิตสาธารณะ ไม่มีการจัดหาแบบนิรนามผ่านตัวกลาง",
+      "Infrastructure Supply Partners": "พันธมิตรผู้ให้บริการโครงสร้างพื้นฐาน",
+      "WHY NANHAI": "ทำไมต้องเลือกเรา", "Built Like an Exchange": "สร้างขึ้นอย่างตลาดแลกเปลี่ยน",
+      "Not another relay. The exchange layer — matching, verification, metering and settlement — is the product.":
+        "ไม่ใช่ตัวกลางส่งต่ออีกเจ้า ผลิตภัณฑ์ของเราคือชั้นของตลาดแลกเปลี่ยน ได้แก่ การจับคู่ การยืนยัน การวัดปริมาณ และการชำระบัญชี",
+      "Neutral Matching": "การจับคู่ที่เป็นกลาง",
+      "The exchange does not push its own supply. Requests are matched to listed suppliers on capability and availability, under one neutral rulebook.":
+        "ตลาดไม่ผลักดันอุปทานของตนเอง คำขอจะถูกจับคู่กับผู้ให้บริการที่จดทะเบียนตามความสามารถและความพร้อมให้บริการ ภายใต้กฎเกณฑ์ที่เป็นกลางชุดเดียวกัน",
+      "Verified Suppliers": "ผู้ให้บริการที่ผ่านการยืนยัน",
+      "Suppliers are identity-checked and capability-tested before listing, with ongoing credit scoring based on delivery quality and stability.":
+        "ผู้ให้บริการได้รับการตรวจสอบตัวตนและทดสอบความสามารถก่อนจดทะเบียน พร้อมการให้คะแนนเครดิตอย่างต่อเนื่องตามคุณภาพและความเสถียรในการส่งมอบ",
+      "One Unified API": "API แบบรวมศูนย์เพียงชุดเดียว",
+      "A single OpenAI-compatible endpoint covers chat, image, video and embeddings across every listed model. Integrate once, trade everything.":
+        "ปลายทางเดียวที่รองรับ OpenAI ครอบคลุมการแชท รูปภาพ วิดีโอ และเอ็มเบดดิงของโมเดลที่จดทะเบียนทั้งหมด เชื่อมต่อครั้งเดียว ใช้งานได้ทั้งหมด",
+      "Unified Billing": "การเรียกเก็บเงินแบบรวมศูนย์",
+      "All usage across all suppliers settles into one account and one transparent usage statement. No per-vendor top-ups, no fragmented bills.":
+        "การใช้งานจากผู้ให้บริการทั้งหมดชำระเข้าสู่บัญชีเดียวและใบแจ้งยอดการใช้งานที่โปร่งใสเพียงฉบับเดียว ไม่ต้องเติมเงินแยกตามผู้ให้บริการ และไม่มีใบเรียกเก็บเงินกระจัดกระจาย",
+      "Transparent Usage": "ความโปร่งใสในการใช้งาน",
+      "Every call is metered and logged in real time in the console — tokens, latency and routing — so what you used is always auditable.":
+        "ทุกการเรียกใช้ได้รับการวัดและบันทึกแบบเรียลไทม์ในคอนโซล ทั้งจำนวนโทเคน เวลาแฝง และเส้นทาง ทำให้การใช้งานของคุณตรวจสอบได้เสมอ",
+      "Singapore Gateway": "เกตเวย์สิงคโปร์",
+      "Operated from Singapore for global reach, connecting overseas demand with the strongest model supply across Asia and beyond.":
+        "ดำเนินการจากสิงคโปร์เพื่อการเข้าถึงทั่วโลก เชื่อมต่อความต้องการจากต่างประเทศเข้ากับอุปทานโมเดลที่แข็งแกร่งที่สุดในเอเชียและที่อื่น ๆ",
+      "THE FIX LIST": "รายการแก้ไขปัญหา", "Built Around the Pain": "สร้างขึ้นรอบปัญหาที่แท้จริง",
+      "We read what developers actually complain about — the walls, the caps, the bans, the surprise bills — and built the exchange the other way.":
+        "เราอ่านสิ่งที่นักพัฒนาบ่นถึงจริง ๆ ทั้งกำแพง ขีดจำกัด การแบน และใบเรียกเก็บเงินที่ไม่คาดคิด แล้วสร้างตลาดแลกเปลี่ยนในทิศทางตรงกันข้าม",
+      "No Payment Wall": "ไม่มีกำแพงการชำระเงิน",
+      "China's strongest models with none of the four walls: an English console, no +86 phone number, no passport real-name queue, no Alipay-only top-up. If you can pay, you can build.":
+        "ใช้โมเดลที่แข็งแกร่งที่สุดของจีนโดยไม่ต้องข้ามกำแพงสี่ชั้น ได้แก่ คอนโซลภาษาอังกฤษ ไม่ต้องใช้หมายเลขโทรศัพท์ +86 ไม่ต้องเข้าคิวยืนยันตัวตนด้วยหนังสือเดินทาง และไม่จำกัดการเติมเงินเฉพาะ Alipay เท่านั้น หากคุณชำระเงินได้ คุณก็สร้างผลิตภัณฑ์ได้",
+      "Costs You Control": "ต้นทุนที่คุณควบคุมได้",
+      "Prepaid balance, usage-based billing and spending caps you set yourself. No runaway auto-charges, no credit card billed by surprise, no aggregator surcharge stacked on your margin.":
+        "ยอดเงินแบบเติมเงินล่วงหน้า การเรียกเก็บตามปริมาณการใช้งาน และเพดานการใช้จ่ายที่คุณกำหนดเอง ไม่มีการเรียกเก็บอัตโนมัติที่ควบคุมไม่ได้ ไม่มีการตัดบัตรเครดิตโดยไม่คาดคิด และไม่มีค่าธรรมเนียมซ้อนจากตัวกลางรวมบริการ",
+      "Ban-Proof Supply": "อุปทานที่ทนต่อการแบน",
+      "Supply is never tied to a single upstream account. When one source is banned, throttled or cut off, routing shifts — the ban does not cascade to you.":
+        "อุปทานไม่เคยผูกกับบัญชีต้นน้ำเพียงบัญชีเดียว เมื่อแหล่งใดแหล่งหนึ่งถูกแบน ถูกจำกัด หรือถูกตัดออก การจัดเส้นทางจะเปลี่ยนโดยอัตโนมัติ การแบนจะไม่ส่งผลกระทบต่อเนื่องมาถึงคุณ",
+      "No Caps, No Seat Traps": "ไม่มีเพดาน ไม่มีกับดักจำนวนที่นั่ง",
+      "No monthly spending ceiling that stops your product mid-month, and no 150-seat enterprise plan as the only way up. Pay as you go, sized for real teams.":
+        "ไม่มีเพดานการใช้จ่ายรายเดือนที่ทำให้ผลิตภัณฑ์ของคุณหยุดกลางเดือน และไม่มีแผนองค์กร 150 ที่นั่งเป็นทางเลือกเดียวในการขยายการใช้งาน ชำระตามการใช้งานจริง ในขนาดที่เหมาะกับทีมจริง",
+      "Stable at Peak Hours": "เสถียรในช่วงเวลาเร่งด่วน",
+      "Multi-channel redundancy behind every popular model. Peak-hour 503s and single-provider errors upstream do not take your product down.":
+        "ช่องทางสำรองหลายเส้นทางอยู่เบื้องหลังโมเดลยอดนิยมทุกโมเดล ข้อผิดพลาด 503 ในช่วงเร่งด่วนและความผิดพลาดจากผู้ให้บริการรายเดียวจะไม่ทำให้ผลิตภัณฑ์ของคุณหยุดทำงาน",
+      "A Real Counterparty": "คู่สัญญาที่มีตัวตนจริง",
+      "A registered company you can contract with, reconcile against and audit — a full statement for every token. Not a grey reseller who vanishes with your balance.":
+        "บริษัทจดทะเบียนที่คุณสามารถทำสัญญา กระทบยอด และตรวจสอบได้ พร้อมใบแจ้งยอดครบถ้วนสำหรับทุกโทเคน ไม่ใช่ผู้ขายต่อสีเทาที่หายไปพร้อมยอดเงินของคุณ",
+      "SETTLEMENT": "การชำระบัญชี", "Settle Your Way": "ชำระบัญชีในแบบของคุณ",
+      "One more wall removed: paying. Top up and settle through the channel that actually works in your country — every settlement is confirmed by a human, so a declined card never locks you out.":
+        "กำแพงอีกชั้นที่ถูกทำลาย คือการชำระเงิน เติมเงินและชำระบัญชีผ่านช่องทางที่ใช้ได้จริงในประเทศของคุณ การชำระบัญชีทุกรายการได้รับการยืนยันโดยเจ้าหน้าที่ บัตรที่ถูกปฏิเสธจะไม่ทำให้คุณถูกล็อกออก",
+      "Alipay": "Alipay", "WeChat Pay": "WeChat Pay", "Bank Wire · SWIFT": "โอนเงินผ่านธนาคาร · SWIFT",
+      "HOW IT WORKS": "วิธีการทำงาน", "Three Steps to the Board": "สามขั้นตอนสู่ตารางแลกเปลี่ยน",
+      "Get one API key": "รับคีย์ API เพียงหนึ่งเดียว",
+      "Create an account in the console and issue a single key for the whole exchange.":
+        "สร้างบัญชีในคอนโซลและออกคีย์เดียวสำหรับตลาดแลกเปลี่ยนทั้งหมด",
+      "Route to any model": "จัดเส้นทางไปยังโมเดลใดก็ได้",
+      "Call any listed model through the same endpoint — switch models by name, nothing else changes.":
+        "เรียกใช้โมเดลที่จดทะเบียนใดก็ได้ผ่านปลายทางเดียวกัน สลับโมเดลตามชื่อ โดยไม่มีสิ่งอื่นเปลี่ยนแปลง",
+      "Settle in one place": "ชำระบัญชีในที่เดียว",
+      "Usage from every supplier lands on one statement, with full logs in the console.":
+        "การใช้งานจากผู้ให้บริการทั้งหมดรวมอยู่ในใบแจ้งยอดฉบับเดียว พร้อมบันทึกฉบับสมบูรณ์ในคอนโซล",
+      "WORKS WITH": "ทำงานร่วมกับ",
+      "FOR DEVELOPERS": "สำหรับนักพัฒนา", "Built to Integrate, Built to Hold": "สร้างเพื่อการเชื่อมต่อ สร้างเพื่อความมั่นคง",
+      "The complaints we hear most are not about models — they are about everything around them. So the plumbing is part of the product.":
+        "ข้อร้องเรียนที่เราได้ยินบ่อยที่สุดไม่ได้เกี่ยวกับโมเดล แต่เกี่ยวกับทุกสิ่งที่อยู่รอบตัวโมเดล ดังนั้นระบบงานเบื้องหลังจึงเป็นส่วนหนึ่งของผลิตภัณฑ์",
+      "One Integration, OpenAI-Compatible": "เชื่อมต่อครั้งเดียว รองรับ OpenAI",
+      "Point your existing OpenAI client at the exchange endpoint and switch models by name. No new SDK to learn, no chain of aggregators stacking errors and margin between you and the model.":
+        "ชี้ไคลเอนต์ OpenAI ที่คุณมีอยู่ไปยังปลายทางของตลาด และสลับโมเดลตามชื่อ ไม่ต้องเรียนรู้ SDK ใหม่ และไม่มีตัวกลางรวมบริการหลายชั้นที่ซ้อนข้อผิดพลาดและส่วนต่างระหว่างคุณกับโมเดล",
+      "Limits in the Open": "ขีดจำกัดที่เปิดเผย",
+      "The caps on your account are the ones you set on your own tokens — visible in the console, never tightened silently mid-month. Every call lands on a per-token statement you can export and reconcile.":
+        "เพดานของบัญชีคุณคือเพดานที่คุณกำหนดให้โทเคนของคุณเอง มองเห็นได้ในคอนโซล และไม่ถูกปรับลดลงอย่างเงียบ ๆ กลางเดือน ทุกการเรียกใช้จะอยู่ในใบแจ้งยอดแยกตามโทเคนที่คุณส่งออกและกระทบยอดได้",
+      "Failover by Default": "เฟลโอเวอร์เป็นมาตรฐาน",
+      "Failed requests retry automatically across redundant channels, and a failing channel is pulled out of rotation instead of cascading errors into your product. One supplier's bad day is not your outage.":
+        "คำขอที่ล้มเหลวจะลองใหม่โดยอัตโนมัติข้ามช่องทางสำรอง และช่องทางที่ล้มเหลวจะถูกนำออกจากรอบการหมุนเวียนแทนที่จะส่งต่อข้อผิดพลาดเข้าสู่ผลิตภัณฑ์ของคุณ วันแย่ ๆ ของผู้ให้บริการรายหนึ่งจะไม่กลายเป็นวันที่ระบบของคุณล่ม",
+      "THE SOUTHEAST ASIA CHANNEL": "ช่องทางเอเชียตะวันออกเฉียงใต้",
+      "China's Models, Delivered Into Southeast Asia": "โมเดลของจีน ส่งมอบสู่เอเชียตะวันออกเฉียงใต้",
+      "One channel carrying China's strongest models into the region's fastest-growing markets, anchored by the institutions that run Southeast Asia's trade. Tokens only — supplied, routed and settled.":
+        "ช่องทางเดียวที่นำโมเดลที่แข็งแกร่งที่สุดของจีนเข้าสู่ตลาดที่เติบโตเร็วที่สุดในภูมิภาค โดยมีสถาบันที่ขับเคลื่อนการค้าของเอเชียตะวันออกเฉียงใต้เป็นหลักยึด เฉพาะโทเคนเท่านั้น ทั้งการจัดหา การจัดเส้นทาง และการชำระบัญชี",
+      "Model Supply, One Channel": "การจัดหาโมเดล ช่องทางเดียว",
+      "The full board — 134 models across 12 providers — behind one key and one statement, routed into Southeast Asia without the payment walls, phone walls and real-name queues that block the region's builders today.":
+        "ตารางทั้งหมด โมเดล 134 โมเดลจากผู้ให้บริการ 12 ราย อยู่เบื้องหลังคีย์เดียวและใบแจ้งยอดฉบับเดียว จัดเส้นทางเข้าสู่เอเชียตะวันออกเฉียงใต้โดยไม่มีกำแพงการชำระเงิน กำแพงหมายเลขโทรศัพท์ และคิวการยืนยันตัวตนที่ขวางนักพัฒนาในภูมิภาคอยู่ในปัจจุบัน",
+      "Capacity You Can Reserve": "กำลังการรองรับที่จองไว้ได้",
+      "Committed throughput for production workloads: reserved rate limits, per-key ceilings you set yourself, and automatic failover across suppliers when one channel degrades. Your volume is planned capacity, not a shared queue.":
+        "ปริมาณงานที่สำรองไว้สำหรับงานระดับการผลิตจริง ได้แก่ ขีดจำกัดอัตราที่จองไว้ เพดานต่อคีย์ที่คุณกำหนดเอง และการสลับไปช่องทางสำรองโดยอัตโนมัติข้ามผู้ให้บริการเมื่อช่องทางใดช่องทางหนึ่งเสื่อมคุณภาพ ปริมาณของคุณคือกำลังการรองรับที่วางแผนไว้ ไม่ใช่คิวที่ใช้ร่วมกัน",
+      "Built for Banks & Financial Institutions": "สร้างเพื่อธนาคารและสถาบันการเงิน",
+      "Model supply for regulated institutions, with service in English, Simplified and Traditional Chinese, and Thai. Regulated work needs regulated plumbing — per-token statements, key rotation, retention controls and audit-grade logs are already built into the exchange.":
+        "การจัดหาโมเดลสำหรับสถาบันที่อยู่ภายใต้การกำกับดูแล พร้อมบริการในภาษาอังกฤษ ภาษาจีนตัวย่อ ภาษาจีนตัวเต็ม และภาษาไทย งานที่อยู่ภายใต้การกำกับต้องการระบบที่อยู่ภายใต้การกำกับ ใบแจ้งยอดแยกตามโทเคน การหมุนเวียนคีย์ การควบคุมระยะเวลาเก็บข้อมูล และบันทึกคุณภาพระดับการตรวจสอบ ล้วนสร้างไว้ในตลาดแลกเปลี่ยนแล้ว",
+      "Regional Settlement": "การชำระบัญชีในภูมิภาค",
+      "Settle in the channels the region actually uses — USDT, SWIFT wire, PayPal, Alipay and WeChat Pay — confirmed by a human, reconciled on one statement across every supplier.":
+        "ชำระบัญชีผ่านช่องทางที่ภูมิภาคนี้ใช้จริง ได้แก่ USDT การโอนเงิน SWIFT PayPal Alipay และ WeChat Pay ยืนยันโดยเจ้าหน้าที่ และกระทบยอดในใบแจ้งยอดฉบับเดียวข้ามผู้ให้บริการทั้งหมด",
+      "Rooted in the Region": "หยั่งรากในภูมิภาค",
+      "Built around Southeast Asia's markets, languages and business hours — not a fly-in vendor. The channel's home ground is the region itself, with Thailand as its anchor market.":
+        "สร้างขึ้นรอบตลาด ภาษา และเวลาทำการของเอเชียตะวันออกเฉียงใต้ ไม่ใช่ผู้ขายที่บินเข้ามาเป็นครั้งคราว พื้นที่หลักของช่องทางนี้คือภูมิภาคนี้เอง โดยมีประเทศไทยเป็นตลาดหลักยึด",
+      "A Counterparty Institutions Can Audit": "คู่สัญญาที่สถาบันตรวจสอบได้",
+      "A registered company you can contract with, reconcile against and audit — full statements for every token, named contacts, no grey resellers. The standard of counterparty a bank's compliance team can sign off.":
+        "บริษัทจดทะเบียนที่คุณสามารถทำสัญญา กระทบยอด และตรวจสอบได้ ใบแจ้งยอดครบถ้วนสำหรับทุกโทเคน ผู้ติดต่อที่มีชื่อชัดเจน ไม่มีผู้ขายต่อสีเทา นี่คือมาตรฐานของคู่สัญญาที่ทีมกำกับดูแลของธนาคารสามารถอนุมัติได้",
+      "ABOUT": "เกี่ยวกับเรา", "About the Exchange": "เกี่ยวกับตลาดแลกเปลี่ยน",
+      "Nanhai Data Port Token Exchange is a neutral marketplace for AI model capacity. We connect verified supply with global demand through one gateway — one integration, unified API, unified billing — so builders can focus on their product instead of juggling vendors, keys and bills.":
+        "Nanhai Data Port Token Exchange เป็นตลาดกลางสำหรับกำลังการประมวลผลของโมเดล AI เราเชื่อมต่ออุปทานที่ผ่านการยืนยันเข้ากับความต้องการทั่วโลกผ่านเกตเวย์เดียว ทั้งการเชื่อมต่อครั้งเดียว API แบบรวมศูนย์ และการเรียกเก็บเงินแบบรวมศูนย์ เพื่อให้นักพัฒนามุ่งเน้นที่ผลิตภัณฑ์ของตน แทนที่จะต้องจัดการผู้ให้บริการ คีย์ และใบเรียกเก็บเงินหลายชุด",
+      "Open the Console": "เปิดคอนโซล",
+      "© 2026 Nanhai Data Port Token Exchange — one gateway, every model.":
+        "© 2026 Nanhai Data Port Token Exchange — เกตเวย์เดียว เชื่อมต่อทุกโมเดล"
+    }
+  };
+  var currentLang = "en";
+  function T(key){
+    var d = I18N[currentLang];
+    if (d && d[key] !== undefined) return d[key];
+    return null;
+  }
+  function applyStatic(){
+    var dict = I18N[currentLang] || {};
+    document.title = T("@title") || document.title;
+    var meta = document.querySelector('meta[name="description"]');
+    if (meta && T("@desc")) meta.setAttribute("content", T("@desc"));
+    var search = document.getElementById("search");
+    if (search && T("@searchPh")) search.setAttribute("placeholder", T("@searchPh"));
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode: function(n){
+        if (!n.nodeValue || !n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        var p = n.parentElement;
+        if (!p || p.tagName === "SCRIPT" || p.tagName === "STYLE") return NodeFilter.FILTER_REJECT;
+        if (p.closest && p.closest(".lang-switch")) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function(n){
+      if (n._i18nKey === undefined) {
+        n._i18nKey = n.nodeValue.replace(/\s+/g, " ").trim();
+        n._i18nOrig = n.nodeValue;
+      }
+      var v = dict[n._i18nKey];
+      n.nodeValue = (v !== undefined) ? v : n._i18nOrig;
+    });
+  }
+  function buildSwitchers(){
+    document.querySelectorAll(".lang-switch").forEach(function(box){
+      box.innerHTML = "";
+      LANGS.forEach(function(l){
+        var b = document.createElement("button");
+        b.type = "button";
+        b.textContent = l.label;
+        b.setAttribute("data-lang", l.code);
+        if (l.code === currentLang) b.className = "active";
+        b.addEventListener("click", function(){ setLang(l.code); });
+        box.appendChild(b);
+      });
+    });
+  }
+  function setLang(code){
+    var ok = LANGS.some(function(l){ return l.code === code; });
+    if (!ok) code = "en";
+    currentLang = code;
+    try { localStorage.setItem("ndp-lang", code); } catch (e) {}
+    document.documentElement.lang = code;
+    buildSwitchers();
+    applyStatic();
+    if (typeof renderBoard === "function") renderBoard();
+    if (typeof buildRankings === "function") buildRankings();
+    var firstTab = document.querySelector("#tabs .tab");
+    if (firstTab) firstTab.textContent = T("@tabAll") || "All";
+  }
+  function initLang(){
+    var code = null;
+    try {
+      code = new URLSearchParams(location.search).get("lang") || localStorage.getItem("ndp-lang");
+    } catch (e) {}
+    if (!code) code = "en";
+    setLang(code);
+  }
+
+  /* ============ model data ============ */
   var GROUPS = [
     { title: "CLAUDE", tag: "chat", models: ["claude-opus-5","claude-sonnet-5","claude-fable-5","claude-fable-5-1","claude-haiku-4-5","claude-haiku-4-5-20251001","claude-opus-4-8","claude-opus-4-7","claude-opus-4-6","claude-opus-4-5-20251101","claude-opus-4-1-20250805","claude-opus-4-20250514","claude-sonnet-4-6","claude-sonnet-4-5-20250929","claude-sonnet-4-20250514","claude-3-7-sonnet-20250219","claude-3-5-sonnet-20241022","claude-3-5-sonnet-20240620","claude-3-5-haiku-20241022","claude-3-sonnet-20240229","claude-3-haiku-20240307"] },
     { title: "GPT / OPENAI", tag: "chat", models: ["gpt-6-astra","gpt-5.6-terra","gpt-5.6-sol","gpt-5.6-luna","gpt-5.5-pro","gpt-5.5","gpt-5.4-pro","gpt-5.4","gpt-5.4-mini","gpt-5.4-nano","gpt-5.2","gpt-5.1","gpt-5-pro","gpt-5","gpt-5-mini","gpt-5-nano","gpt-4.1","gpt-4.1-mini","gpt-4o-mini","gpt-4","o3-pro","o3","o3-mini","o1-pro","o1","o1-mini","o4-mini"] },
@@ -385,11 +882,11 @@
     if (name.indexOf("seedance") === 0) return "ByteDance";
     return "OpenAI";
   }
-  var TYPE_LABELS = { chat: "Chat", image: "Image", video: "Video", embedding: "Embedding" };
   var MODELS = [];
   GROUPS.forEach(function(g){ g.models.forEach(function(name){
-    MODELS.push({ name: name, vendor: vendorOf(name), group: g.title, type: TYPE_LABELS[g.tag] });
+    MODELS.push({ name: name, vendor: vendorOf(name), group: g.title, typeKey: g.tag });
   });});
+  function typeLabel(tag){ return T("@type." + tag) || tag; }
 
   /* ticker */
   (function(){
@@ -427,45 +924,53 @@
       var tr = document.createElement("tr");
       tr.innerHTML = '<td class="m-name"></td><td class="m-vendor"></td>' +
         '<td><span class="badge type"></span></td>' +
-        '<td><span class="live">Live</span></td>' +
-        '<td><a class="api-link" href="https://api.aaronalphax.com">Trade API →</a></td>';
+        '<td><span class="live"></span></td>' +
+        '<td><a class="api-link" href="https://api.aaronalphax.com"></a></td>';
       tr.children[0].textContent = m.name;
       tr.children[1].textContent = m.vendor;
-      tr.children[2].firstChild.textContent = m.type;
+      tr.children[2].firstChild.textContent = typeLabel(m.typeKey);
+      tr.children[3].firstChild.textContent = T("@live") || "Live";
+      tr.children[4].firstChild.textContent = T("@trade") || "Trade API →";
       body.appendChild(tr);
     });
+    var tpl = T("@count") || "Showing {shown} of {total} listed models";
     document.getElementById("boardCount").textContent =
-      "Showing " + shown + " of " + MODELS.length + " listed models · All models are called by name through one unified API.";
+      tpl.replace("{shown}", shown).replace("{total}", MODELS.length);
   }
   document.getElementById("search").addEventListener("input", renderBoard);
   renderBoard();
 
   /* supplier rankings: derived from listed model coverage */
-  (function(){
+  function buildRankings(){
     var counts = {}, types = {};
     MODELS.forEach(function(m){
       counts[m.vendor] = (counts[m.vendor] || 0) + 1;
       types[m.vendor] = types[m.vendor] || {};
-      types[m.vendor][m.type] = true;
+      types[m.vendor][m.typeKey] = true;
     });
     var rows = Object.keys(counts).map(function(v){
-      return { vendor: v, count: counts[v], types: Object.keys(types[v]).join(" · ") };
+      return { vendor: v, count: counts[v],
+        types: Object.keys(types[v]).map(typeLabel).join(" · ") };
     }).sort(function(a, b){ return b.count - a.count; });
     var list = document.getElementById("rankList");
+    list.innerHTML = "";
     rows.forEach(function(r, i){
       var div = document.createElement("div");
       div.className = "rank-row";
       div.innerHTML = '<div class="rank-no"></div>' +
         '<div class="rank-main"><b></b><span></span></div>' +
-        '<div class="rank-meta"><b></b>models listed</div>' +
-        '<span class="status listed">LISTED</span>';
+        '<div class="rank-meta"><b></b><span></span></div>' +
+        '<span class="status listed"></span>';
       div.children[0].textContent = i + 1;
       div.children[1].children[0].textContent = r.vendor;
       div.children[1].children[1].textContent = r.types;
       div.children[2].children[0].textContent = r.count;
+      div.children[2].children[1].textContent = T("@modelsListed") || "models listed";
+      div.children[3].textContent = T("@listed") || "LISTED";
       list.appendChild(div);
     });
-  })();
+  }
+  buildRankings();
 
   /* mobile menu */
   var burger = document.getElementById("burger");
@@ -474,6 +979,10 @@
   menu.querySelectorAll("a").forEach(function(a){
     a.addEventListener("click", function(){ menu.classList.remove("open"); });
   });
+
+  /* init language (after board/rankings exist so setLang can re-render) */
+  initLang();
+
 </script>
 </body>
 </html>
